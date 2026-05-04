@@ -25,3 +25,9 @@ Route::get('/tickets', function () {
 Route::get('/tickets/create', function () {
     return view('pages.createticket');
 })->name('tickets.create');
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
+Route::get('/forgot-password', function () {
+    return view('auth.forgot-password');
+})->name('password.request');
