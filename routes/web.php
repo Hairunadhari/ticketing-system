@@ -22,3 +22,6 @@ Route::get('/dashboard', function () {
 Route::get('/tickets', function () {
     return view('pages.ticket');
 });
+Route::get('/tickets/create', function () {
+    return view('pages.createticket');
+})->name('tickets.create');
