@@ -17,26 +17,96 @@
             efisien.
         </p>
 
-        <button class="btn btn-primary my-2" data-toggle="modal" data-target="#exampleModal">+ Add Ticket</button>
-
+        <!-- Button Add dengan style modern -->
+        <div class="d-flex">
+            <button class="btn btn-primary btn-icon icon-left shadow-primary mb-4 ml-auto" data-toggle="modal"
+                data-target="#exampleModal">
+                <i class="fas fa-plus"></i> Add New Ticket
+            </button>
+        </div>
         <div class="row">
             @foreach ($tickets as $ticket)
-
-            <div class="col-12 col-md-12 col-lg-12">
-                <div class="card" style="border-top: 3px solid #281D00;">
-                    <div class="card-header">
-                        <h4>{{ $ticket->project_name }}</h4>
+            <div class="col-12 mb-4">
+                <div class="card card-primary shadow-sm border-0">
+                    <div class="card-header d-flex justify-content-between align-items-center py-3">
+                        <div>
+                            <h4 class="text-dark mb-0" style="font-size: 1.25rem; font-weight: 700;">
+                                {{ ucfirst($ticket->project_name) }}</h4>
+                        </div>
+                        <!-- Status Badge dari desain watermarked_img_1263451293621765473.png -->
                         <div class="card-header-action">
-                            <a href="#" class="btn btn-primary">Set Pending</a>
-                            <a href="#" class="btn btn-danger">Kerjakan</a>
+                            @if($ticket->status == 'TODO')
+                            <span class="badge badge-secondary px-3 py-2 text-uppercase" style="border-radius: 20px;">
+                                Status: {{ $ticket->status }}
+                            </span>
+
+                            @elseif($ticket->status == 'PROGRESS')
+                            <span class="badge badge-primary px-3 py-2 text-uppercase" style="border-radius: 20px;">
+                                Status: {{ $ticket->status }}
+                            </span>
+
+                            @elseif($ticket->status == 'PENDING')
+                            <span class="badge badge-warning px-3 py-2 text-uppercase" style="border-radius: 20px;">
+                                Status: {{ $ticket->status }}
+                            </span>
+
+                            @elseif($ticket->status == 'DONE')
+                            <span class="badge badge-success px-3 py-2 text-uppercase" style="border-radius: 20px;">
+                                Status: {{ $ticket->status }}
+                            </span>
+
+                            @else
+                            <span class="badge badge-light px-3 py-2 text-uppercase" style="border-radius: 20px;">
+                                Status: {{ $ticket->status }}
+                            </span>
+                            @endif
                         </div>
                     </div>
+
                     <div class="card-body">
-                        <p>Write something here</p>
+                        <!-- Metadata Row -->
+                        <div class="row mb-3 text-muted" style="font-size: 0.9rem;">
+                            <div class="col-auto mr-3">
+                                <strong>Priority:</strong>
+                                <span class="text-danger"><i class="fas fa-heartbeat mr-1"></i>
+                                    {{ $ticket->classification }}</span>
+                            </div>
+                            <div class="col-auto mr-3 border-left pl-3">
+                                <strong>Created:</strong> {{ $ticket->created_at->diffForHumans() }}
+                            </div>
+                            <div class="col-auto border-left pl-3">
+                                <strong>Assigned To:</strong>
+                                <img alt="image" src="{{ asset('stisla/assets/img/avatar/avatar-1.png') }}"
+                                    class="rounded-circle mr-1" width="20">
+                                <span class="font-weight-600 text-dark">John D.</span>
+                            </div>
+                        </div>
+
+                        <!-- Deskripsi Box -->
+                        <div class="bg-light p-3 rounded d-flex justify-content-between align-items-center">
+                            <p class="mb-0 text-dark" style="max-width: 70%;">
+                                {{ $ticket->description ?? 'Write something here. The problem description goes in this detailed view...' }}
+                            </p>
+
+                            <!-- Tombol Aksi di samping deskripsi sesuai gambar -->
+                            <div class="buttons">
+                                <a href="#" class="btn btn-outline-info btn-sm px-3 shadow-none">
+                                    <i class="fas fa-file-alt mr-1"></i> Set Pending
+                                </a>
+                                <a href="#" class="btn btn-warning btn-sm px-4 text-white shadow-none font-weight-bold">
+                                    Start Work
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             @endforeach
+        </div>
+
+        <!-- Pagination Section -->
+        <div class="d-flex justify-content-center mt-4">
+            {{ $tickets->links('pagination::bootstrap-4') }}
         </div>
 
     </div>
@@ -48,8 +118,8 @@
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog">
     <div class="modal-dialog  modal-lg" role="document">
-        <form method="POST" action="{{ route('tickets.create') }}">
-                    @csrf
+        <form method="POST" action="{{ route('tickets.create') }}" enctype="multipart/form-data">
+            @csrf
 
             <div class="modal-content">
                 <!-- HEADER -->
@@ -157,7 +227,7 @@
                                 <select class="form-control" name="classification" required>
                                     <option value="">Select classification</option>
                                     <option value="po">po</option>
-                                    <option value="pl">pl</option>
+                                    <option value="pl">p1</option>
                                     <option value="p2">p2</option>
                                     <option value="p3">p3</option>
                                     <option value="p4">p4</option>
@@ -166,7 +236,7 @@
                         </div>
 
                         <!-- Status -->
-                        <div class="col-md-6">
+                        {{-- <div class="col-md-6">
                             <div class="form-group">
                                 <label>Status</label>
                                 <select class="form-control" name="status" required>
@@ -176,21 +246,19 @@
                                     <option value="Closed">Closed</option>
                                 </select>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <!-- Date Range -->
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Date Range</label>
-                                <select class="form-control" name="date_range" required>
-                                    <option value="">Select Date</option>
-                                    <option value="today">Today</option>
-                                    <option value="yesterday">Yesterday</option>
-                                    <option value="this_week">This Week</option>
-                                    <option value="last_7_days">Last 7 Days</option>
-                                    <option value="last_30_days">Last 30 Days</option>
-                                    <option value="this_month">This Month</option>
-                                </select>
+                                <label>Image</label>
+                                <input type="file" accept="image/*" name="image" class="form-control mb-2">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea class="form-control" name="description"></textarea>
                             </div>
                         </div>
 

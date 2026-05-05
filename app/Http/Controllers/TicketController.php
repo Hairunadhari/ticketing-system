@@ -9,12 +9,14 @@ class TicketController extends Controller
 {
     public function list()
     {
-        $tickets = Ticket::all(); // Assuming you have a Ticket model
+        $tickets = Ticket::paginate(10); // Assuming you have a Ticket model
         return view('pages.ticket', compact('tickets'));
     }
 
     public function create(Request $request)
     {
+        $imageName = time() . '.' . $request->image->extension();
+        $request->image->storeAs('images', $imageName, 'public');
         Ticket::create([
             'company' => $request->company,
             'country' => $request->country,
@@ -22,8 +24,9 @@ class TicketController extends Controller
             'service' => $request->service,
             'project_name' => $request->project_name,
             'classification' => $request->classification,
-            'status' => $request->status,
-            'date_range' => $request->date_range,
+            'status' => 'TODO', // Default status
+            'description' => $request->description,
+            'image' => $imageName,
         ]);
 
         return redirect()->route('tickets.list')->with('success', 'Ticket created successfully.');
