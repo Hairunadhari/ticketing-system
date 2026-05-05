@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{{ asset('stisla/assets/modules/weather-icon/css/weather-icons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('stisla/assets/modules/weather-icon/css/weather-icons-wind.min.css') }}">
     <link rel="stylesheet" href="{{ asset('stisla/assets/modules/summernote/summernote-bs4.css') }}">
+     <link rel="stylesheet" href="{{ asset('stisla/assets/modules/izitoast/css/iziToast.min.css') }}">
 
     <!-- Template CSS -->
     <link rel="stylesheet" href="{{ asset('stisla/assets/css/style.css') }}">
@@ -30,6 +31,7 @@
             <div class="main-content">
                 @yield('content')
             </div>
+            @yield('modal')
             <footer class="main-footer">
                 <div class="footer-left">
                     Copyright &copy; 2018 <div class="bullet"></div> Design By <a href="https://nauval.in/">Muhamad
@@ -41,6 +43,8 @@
             </footer>
         </div>
     </div>
+
+
 
     <!-- General JS Scripts -->
     <script src="{{ asset('stisla/assets/modules/jquery.min.js') }}"></script>
@@ -58,13 +62,25 @@
     <script src="{{ asset('stisla/assets/modules/jqvmap/dist/maps/jquery.vmap.world.js') }}"></script>
     <script src="{{ asset('stisla/assets/modules/summernote/summernote-bs4.js') }}"></script>
     <script src="{{ asset('stisla/assets/modules/chocolat/dist/js/jquery.chocolat.min.js') }}"></script>
+    <script src="{{ asset('stisla/assets/modules/izitoast/js/iziToast.min.js') }}"></script>
 
     <!-- Page Specific JS File -->
     <script src="{{ asset('stisla/assets/js/page/index-0.js') }}"></script>
+    <script src="{{ asset('stisla/assets/js/page/bootstrap-modal.js') }}"></script>
 
     <!-- Template JS File -->
     <script src="{{ asset('stisla/assets/js/scripts.js') }}"></script>
     <script src="{{ asset('stisla/assets/js/custom.js') }}"></script>
+
+    @if(session('success'))
+<script>
+    iziToast.success({
+        title: 'Success',
+        message: "{{ session('success') }}",
+        position: 'topRight'
+    });
+</script>
+@endif
 </body>
 
 </html>
