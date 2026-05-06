@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,3 +35,11 @@ Route::get('/register', function () {
 Route::get('/forgot-password', function () {
     return view('auth.forgot-password');
 })->name('password.request');
+
+Route::controller(TicketController::class)->prefix('tickets')->name('tickets.')->group(function(){
+    Route::get('/', 'list')->name('list');
+    Route::post('/create', 'create')->name('create');
+    Route::get('/{id}/detail', 'detail')->name('detail');
+    Route::patch('/{id}/status', 'status')->name('status');
+    Route::post('/export', 'export')->name('export');
+});
