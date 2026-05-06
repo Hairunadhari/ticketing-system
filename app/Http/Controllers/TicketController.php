@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ticket;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
 {
@@ -45,5 +47,35 @@ class TicketController extends Controller
     public function export(Request $request)
     {
         // Logic to export tickets
+    }
+
+    public function setPending($id, Request $request)
+    {
+        $ticket = Ticket::findOrFail($id);
+        if ($request->hasFile('image_pending_reason')) {
+            $imageName = time() . '.' . $request->image_pending_reason->extension();
+            $request->image_pending_reason->storeAs('images', $imageName, 'public');
+            // You can save this image name to a new column if needed
+        }
+        $ticket->pending_reason = $request->pending_reason;
+        $ticket->pending_at = Carbon::now('Asia/Jakarta');
+        $ticket->pending_by = Auth::id() ?? null; // Assuming you have authentication
+        $ticket->status = 'PENDING';
+        $ticket->image_pending_reason = $imageName ?? null; // Save the image name if uploaded
+        $ticket->save();
+
+
+        return redirect()->route('tickets.list')->with('success', 'Ticket set to pending successfully.');
+    }
+
+    public function startWork($id, Request $request)
+    {
+        $ticket = Ticket::findOrFail($id);
+        $ticket->status = 'PROGRESS';
+        $ticket->started_at = Carbon::now('Asia/Jakarta');
+        $ticket->handled_by = Auth::id() ?? null; // Assuming you have authentication
+        $ticket->save();
+
+        return redirect()->route('tickets.list')->with('success', 'Work started on the ticket successfully.');
     }
 }

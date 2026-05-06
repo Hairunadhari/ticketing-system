@@ -39,4 +39,6 @@ Route::controller(TicketController::class)->prefix('tickets')->name('tickets.')-
     Route::get('/{id}/detail', 'detail')->name('detail');
     Route::patch('/{id}/status', 'status')->name('status');
     Route::post('/export', 'export')->name('export');
+    Route::post('/{id}/set-pending', 'setPending')->name('set-pending');
+    Route::post('/{id}/start-work', 'startWork')->name('startWork');
 });

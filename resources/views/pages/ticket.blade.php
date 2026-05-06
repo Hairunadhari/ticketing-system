@@ -60,6 +60,7 @@
                                 Status: {{ $ticket->status }}
                             </span>
                             @endif
+                           
                         </div>
                     </div>
 
@@ -90,12 +91,23 @@
 
                             <!-- Tombol Aksi di samping deskripsi sesuai gambar -->
                             <div class="buttons">
-                                <a href="#" class="btn btn-outline-info btn-sm px-3 shadow-none">
+                                @if($ticket->status != 'PENDING')
+                                <a href="#" class="btn btn-outline-info btn-sm px-3 shadow-none" data-toggle="modal"
+                                    data-target="#setPendingModal{{ $ticket->id }}">
                                     <i class="fas fa-file-alt mr-1"></i> Set Pending
                                 </a>
-                                <a href="#" class="btn btn-warning btn-sm px-4 text-white shadow-none font-weight-bold">
-                                    Start Work
-                                </a>
+                                @endif
+                                 @if ($ticket->status == 'PENDING')
+                                
+                                    <btn class="btn bt-sm btn-light text-uppercase"  data-toggle="modal"
+                                    data-target="#checkReasonModal{{ $ticket->id }}" style="border-radius: 20px;">
+                                    Check Reason Pending
+                                </btn>
+                                @endif
+                                <form action="{{ route('tickets.startWork', $ticket->id) }}" method="POST" class="d-inline form-start-work">
+    @csrf
+    <button type="submit" class="btn btn-sm btn-warning btn-sm px-4 text-white">Start Work</button>
+</form>
                             </div>
                         </div>
                     </div>
@@ -111,6 +123,26 @@
 
     </div>
 </section>
+<script>
+    $(document).on('submit', '.form-start-work', function(e) {
+    e.preventDefault();
+
+    let form = this;
+
+    Swal.fire({
+        title: 'Yakin?',
+        text: "Ticket akan diproses!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, lanjut!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
+});
+</script>
 @endsection
 
 @section('modal')
@@ -276,5 +308,103 @@
         </form>
     </div>
 </div>
+
+@foreach ($tickets as $ticket)
+<!-- Modal set pending -->
+<div class="modal fade" id="setPendingModal{{ $ticket->id }}" tabindex="-1" role="dialog">
+    <div class="modal-dialog  modal-lg" role="document">
+        <form method="POST" action="{{ route('tickets.set-pending', ['id' => $ticket->id]) }}" enctype="multipart/form-data">
+            @csrf
+                @method('POST')
+            <div class="modal-content">
+                <!-- HEADER -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Form Set Pending {{ $ticket->project_name }}</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+
+                <!-- BODY -->
+                <div class="modal-body">
+                    <!-- ROW 1 -->
+                    <div class="row">
+                        <!-- Date Range -->
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Pending Reason</label>
+                                <textarea class="form-control" name="pending_reason"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Image</label>
+                                <input type="file" accept="image/*" name="image_pending_reason" class="form-control mb-2">
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- FOOTER -->
+                <div class="modal-footer bg-whitesmoke br">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal reason pending -->
+<div class="modal fade" id="checkReasonModal{{ $ticket->id }}" tabindex="-1" role="dialog">
+    <div class="modal-dialog  modal-lg" role="document">
+        <form method="POST" action="{{ route('tickets.set-pending', ['id' => $ticket->id]) }}" enctype="multipart/form-data">
+            @csrf
+                @method('POST')
+            <div class="modal-content">
+                <!-- HEADER -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Form Reason Pending {{ $ticket->project_name }}</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+
+                <!-- BODY -->
+                <div class="modal-body">
+                    <!-- ROW 1 -->
+                    <div class="row">
+                        <!-- Date Range -->
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Pending Reason</label>
+                                <textarea class="form-control" name="pending_reason" readonly>{{ $ticket->pending_reason }}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Image</label>
+                                <img src="{{ asset('storage/images/' . $ticket->image_pending_reason) }}"
+                                    alt="Pending Reason Image" class="img-fluid mb-2">
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- FOOTER -->
+                <div class="modal-footer bg-whitesmoke br">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+@endforeach
 
 @endsection
