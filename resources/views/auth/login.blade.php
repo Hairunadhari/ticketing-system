@@ -1,357 +1,250 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.master')
 
-<head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-    <title>Login - Ticketing System</title>
+@section('content')
+<style>
+    body, #app { min-height: 100vh; }
 
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    .login-center {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background: #f4f6fb;
+    }
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    .login-box { width: 100%; max-width: 400px; }
 
-        body {
-            font-family: 'DM Sans', sans-serif;
-            height: 100vh;
-            width: 100vw;
-            overflow-x: hidden;
-            background: #f5f5f5;
-            position: relative;
-        }
+    /* Icon badge */
+    .login-icon-wrap {
+        width: 56px; height: 56px;
+        background: #ebf2fd;
+        border-radius: 14px;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 1rem;
+    }
+    .login-icon-wrap i { font-size: 26px; color: #2d6fd6; }
 
-        /* glow background */
-        body::before,
-        body::after {
-            content: "";
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            filter: blur(60px);
-            z-index: 0;
-        }
+    .login-heading {
+        text-align: center;
+        margin-bottom: 1.75rem;
+    }
+    .login-heading h1 {
+        font-size: 22px;
+        font-weight: 600;
+        color: #111827;
+        margin: 0 0 4px;
+    }
+    .login-heading p {
+        font-size: 14px;
+        color: #6b7280;
+        margin: 0;
+    }
 
-        body::before {
-            background: radial-gradient(circle, rgba(91,163,245,0.25), transparent 60%);
-            top: -200px;
-            left: -200px;
-        }
+    /* Card */
+    .login-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 1.75rem;
+    }
 
-        body::after {
-            background: radial-gradient(circle, rgba(56,200,150,0.18), transparent 60%);
-            bottom: -200px;
-            right: -200px;
-        }
+    /* Field */
+    .field-group { margin-bottom: 1rem; }
+    .field-group label {
+        display: block;
+        font-size: 13px;
+        color: #374151;
+        margin-bottom: 6px;
+        font-weight: 500;
+    }
+    .field-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+    }
+    .field-row label { margin-bottom: 0; }
+    .forgot-link { font-size: 12px; color: #2d6fd6; text-decoration: none; }
+    .forgot-link:hover { text-decoration: underline; }
 
-        /* WRAPPER */
-        .login-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            /* gap: 40px; */
-            min-height: 100vh;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
-        }
+    /* Input */
+    .input-icon-wrap { position: relative; }
+    .input-icon-wrap i {
+        position: absolute;
+        left: 11px; top: 50%;
+        transform: translateY(-50%);
+        font-size: 16px;
+        color: #9ca3af;
+        pointer-events: none;
+    }
+    .input-icon-wrap .form-control { padding-left: 36px; }
+    .form-control {
+        width: 100%;
+        padding: 9px 12px;
+        font-size: 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        color: #111827;
+        background: #fff;
+        transition: border-color 0.15s, box-shadow 0.15s;
+        outline: none;
+    }
+    .form-control::placeholder { color: #c0c7d4; }
+    .form-control:focus {
+        border-color: #2d6fd6;
+        box-shadow: 0 0 0 3px rgba(45,111,214,0.1);
+    }
 
-        /* LEFT PANEL */
-        .login-left {
-            flex: 1;
-            max-width: 550px;
-            height: 80vh;
-            background: linear-gradient(135deg, #1689e2 0%, #2c61fe 60%);
-            padding: 50px;
-            border-top-left-radius: 18px;
-            border-bottom-left-radius: 18px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
+    /* Error */
+    .field-error { font-size: 12px; color: #dc2626; margin-top: 5px; }
 
-        .login-left::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(0, 38, 161, 0.7), rgba(10,15,30,0.9));
-        }
+    /* Remember */
+    .remember-row {
+        display: flex; align-items: center;
+        gap: 8px; margin-bottom: 1.4rem;
+    }
+    .remember-row label { font-size: 13px; color: #6b7280; cursor: pointer; margin: 0; }
+    .remember-row input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; accent-color: #2d6fd6; }
 
-        .brand-mark {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+    /* Primary button */
+    .btn-login {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        background: #2d6fd6;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.15s, transform 0.1s;
+        letter-spacing: 0.2px;
+    }
+    .btn-login:hover  { background: #245fba; }
+    .btn-login:active { transform: scale(0.98); }
 
-        .brand-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #5ba3f5, #38c896);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
+    /* Divider */
+    .or-divider {
+        display: flex; align-items: center;
+        gap: 10px; margin: 1.25rem 0;
+    }
+    .or-line { flex: 1; height: 1px; background: #e5e7eb; }
+    .or-text  { font-size: 12px; color: #9ca3af; }
 
-        .left-headline {
-            position: relative;
-            z-index: 2;
-        }
+    /* Google button */
+    .btn-google {
+        width: 100%;
+        padding: 9px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #374151;
+        background: #fff;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        gap: 8px;
+        transition: background 0.15s;
+    }
+    .btn-google:hover { background: #f9fafb; }
 
-        .left-headline h1 {
-            font-size: 32px;
-            font-family: 'Syne', sans-serif;
-        }
+    /* Footer */
+    .login-footer {
+        text-align: center;
+        font-size: 12px;
+        color: #9ca3af;
+        margin-top: 1.5rem;
+    }
+</style>
 
-        .left-headline span {
-            background: linear-gradient(90deg, #5ba3f5, #38c896);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+<div class="login-center">
+    <div class="login-box">
 
-        .left-headline p {
-            margin-top: 10px;
-            color: rgba(255,255,255,0.7);
-            max-width: 280px;
-        }
-
-        /* RIGHT PANEL */
-        .login-right {
-            width: 380px;
-            height: 80vh;
-            background: rgba(248,249,252,0.95);
-            backdrop-filter: blur(20px);
-            padding: 50px 40px;
-            border-top-right-radius: 18px;
-            border-bottom-right-radius: 18px;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.25);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .login-right h2 {
-            font-family: 'Syne', sans-serif;
-            font-size: 26px;
-            color: #0d1b4b;
-        }
-
-        .sub {
-            color: #7a8599;
-            margin-bottom: 25px;
-            font-size: 13px;
-        }
-
-        .field-group {
-            margin-bottom: 15px;
-        }
-
-        .field-group label {
-            font-size: 11px;
-            font-weight: 600;
-            color: #6b7280;
-            text-transform: uppercase;
-        }
-
-        .input-wrap input {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: 1px solid rgba(0,0,0,0.08);
-            background: white;
-            outline: none;
-            transition: 0.25s;
-        }
-
-        .input-wrap input:focus {
-            border-color: #5ba3f5;
-            box-shadow: 0 10px 25px rgba(91,163,245,0.15);
-        }
-
-        .remember-row {
-            display: flex;
-            justify-content: space-between;
-            margin: 15px 0 20px;
-            font-size: 13px;
-        }
-
-        .forgot-link {
-            color: #5ba3f5;
-            text-decoration: none;
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 700;
-            color: white;
-            background: linear-gradient(135deg, #5ba3f5, #38c896);
-            cursor: pointer;
-            transition: 0.25s;
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-        }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        .divider-line {
-            flex: 1;
-            height: 1px;
-            background: #e5e7eb;
-        }
-
-        .divider-text {
-            font-size: 11px;
-            color: #9ca3af;
-        }
-
-        .sso-btn {
-            width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            border: 1px solid #e5e7eb;
-            background: white;
-            cursor: pointer;
-        }
-
-        .footer-note {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 11px;
-            color: #9ca3af;
-        }
-
-        /* =========================
-           🔥 RESPONSIVE FIX FULL
-        ========================= */
-
-        /* TABLET */
-        @media (max-width: 1024px) {
-            .login-left {
-                max-width: 45%;
-            }
-
-            .login-right {
-                width: 340px;
-            }
-        }
-
-        /* MOBILE */
-        @media (max-width: 768px) {
-
-            .login-wrapper {
-                flex-direction: column;
-                justify-content: center;
-            }
-
-            .login-left {
-                display: none;
-            }
-
-            .login-right {
-                width: 100%;
-                max-width: 420px;
-                padding: 40px 30px;
-                margin: auto;
-            }
-        }
-
-        /* SMALL MOBILE */
-        @media (max-width: 480px) {
-            .login-right {
-                width: 92%;
-                padding: 30px 20px;
-            }
-
-            .login-right h2 {
-                font-size: 22px;
-            }
-        }
-
-    </style>
-</head>
-
-<body>
-
-<div class="login-wrapper">
-
-    <!-- LEFT -->
-    <div class="login-left">
-        <div class="brand-mark">
-            <div class="brand-icon">T</div>
-            <div>TicketDesk</div>
+        <div class="login-heading">
+            <div class="login-icon-wrap">
+                <i class="fas fa-ticket-alt"></i>
+            </div>
+            <h1>Welcome back</h1>
+            <p>Sign in to your ticketing workspace</p>
         </div>
 
-        <div class="left-headline">
-            <h1>Manage tickets <span>effortlessly</span></h1>
-            <p>Modern system for tracking and resolving support requests.</p>
-        </div>
-    </div>
+        <div class="login-card">
 
-    <!-- RIGHT -->
-    <div class="login-right">
+            <form method="POST" action="/login">
+                @csrf
 
-        <h2>Welcome back</h2>
-        <p class="sub">Sign in to continue</p>
-
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
-
-            <div class="field-group">
-                <label>Email</label>
-                <div class="input-wrap">
-                    <input type="text" name="username" placeholder="you@company.com">
+                <div class="field-group">
+                    <label for="email">Email address</label>
+                    <div class="input-icon-wrap">
+                        <i class="fas fa-envelope"></i>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-control @error('email') is-invalid @enderror"
+                            placeholder="you@company.com"
+                            value="{{ old('email') }}"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
+                    @error('email')
+                        <p class="field-error">{{ $message }}</p>
+                    @enderror
                 </div>
-            </div>
 
-            <div class="field-group">
-                <label>Password</label>
-                <div class="input-wrap">
-                    <input type="password" name="password" placeholder="••••••••">
+                <div class="field-group">
+                    <div class="field-row">
+                        <label for="password">Password</label>
+                        <a href="{{ route('password.request') }}" class="forgot-link">Forgot password?</a>
+                    </div>
+                    <div class="input-icon-wrap">
+                        <i class="fas fa-lock"></i>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-control @error('password') is-invalid @enderror"
+                            placeholder="••••••••"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+                    @error('password')
+                        <p class="field-error">{{ $message }}</p>
+                    @enderror
                 </div>
+
+                <div class="remember-row">
+                    <input type="checkbox" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
+                    <label for="remember">Remember me for 30 days</label>
+                </div>
+
+                <button type="submit" class="btn-login">Sign in</button>
+            </form>
+
+            <div class="or-divider">
+                <div class="or-line"></div>
+                <span class="or-text">or continue with</span>
+                <div class="or-line"></div>
             </div>
 
-            <div class="remember-row">
-                <label><input type="checkbox"> Remember</label>
-                <a href="#" class="forgot-link">Forgot?</a>
-            </div>
+            <button type="button" class="btn-google">
+                <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                Sign in with Google
+            </button>
 
-            <button class="btn-login">Sign In</button>
-        </form>
-
-        <div class="divider">
-            <div class="divider-line"></div>
-            <span class="divider-text">OR</span>
-            <div class="divider-line"></div>
         </div>
 
-        <button class="sso-btn">Continue with Google</button>
-
-        <div class="footer-note">
-            © {{ date('Y') }} TicketDesk
-        </div>
+        <p class="login-footer">© {{ date('Y') }} Ticketing System · All rights reserved</p>
 
     </div>
-
 </div>
 
-</body>
-</html>
+@endsection
