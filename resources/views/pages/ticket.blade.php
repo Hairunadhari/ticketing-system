@@ -76,7 +76,7 @@
                                 <strong>Created:</strong> {{ $ticket->created_at->diffForHumans() }}
                             </div>
                             <div class="col-auto border-left pl-3">
-                                <strong>Assigned To:</strong>
+                                <strong>Handled By:</strong>
                                 <img alt="image" src="{{ asset('stisla/assets/img/avatar/avatar-1.png') }}"
                                     class="rounded-circle mr-1" width="20">
                                 <span class="font-weight-600 text-dark">John D.</span>

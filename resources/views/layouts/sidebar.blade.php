@@ -10,7 +10,8 @@
             <li class="menu-header">Dashboard</li>
             <li><a class="nav-link" href="/dashboard"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
             <li class="menu-header">Starter</li>
-            <li><a class="nav-link" href="/tickets"><i class="fas fa-tasks"></i> <span>Ticket</span></a></li>
+            <li><a class="nav-link" href="/tickets"><i class="fas fa-headset"></i> <span>Ticket IT Helpdesk</span></a></li>
+            <li><a class="nav-link" href="/tickets"><i class="fas fa-server"></i> <span>Ticket IT Infrastructure</span></a></li>
         </ul>
     </aside>
 </div>

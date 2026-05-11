@@ -185,9 +185,9 @@
 
         <div class="login-card">
 
-            <form method="POST" action="/login">
+            <form method="POST" action="/login/create" enctype="multipart/form-data">
                 @csrf
-
+                @method('post')
                 <div class="field-group">
                     <label for="email">Email address</label>
                     <div class="input-icon-wrap">
@@ -258,7 +258,7 @@
 
         {{-- Register prompt --}}
         <p class="register-prompt">
-            Belum punya akun? <a href="{{ route('register') }}">Daftar sekarang</a>
+            Belum punya akun? <a href="{{ route('register.index') }}">Daftar sekarang</a>
         </p>
 
         <p class="login-footer">© {{ date('Y') }} Ticketing System · All rights reserved</p>
