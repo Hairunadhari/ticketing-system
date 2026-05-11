@@ -149,12 +149,26 @@
     }
     .btn-google:hover { background: #f9fafb; }
 
+    /* Register link */
+    .register-prompt {
+        text-align: center;
+        font-size: 13px;
+        color: #6b7280;
+        margin-top: 1.25rem;
+    }
+    .register-prompt a {
+        color: #2d6fd6;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    .register-prompt a:hover { text-decoration: underline; }
+
     /* Footer */
     .login-footer {
         text-align: center;
         font-size: 12px;
         color: #9ca3af;
-        margin-top: 1.5rem;
+        margin-top: 0.75rem;
     }
 </style>
 
@@ -241,6 +255,11 @@
             </button>
 
         </div>
+
+        {{-- Register prompt --}}
+        <p class="register-prompt">
+            Belum punya akun? <a href="{{ route('register') }}">Daftar sekarang</a>
+        </p>
 
         <p class="login-footer">© {{ date('Y') }} Ticketing System · All rights reserved</p>
 
