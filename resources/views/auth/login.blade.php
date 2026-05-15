@@ -211,7 +211,6 @@
                 <div class="field-group">
                     <div class="field-row">
                         <label for="password">Password</label>
-                        <a href="{{ route('password.request') }}" class="forgot-link">Forgot password?</a>
                     </div>
                     <div class="input-icon-wrap">
                         <i class="fas fa-lock"></i>

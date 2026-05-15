@@ -26,13 +26,6 @@ Route::middleware('guest')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/create', 'login')->name('create');
     });
-    Route::get('/forgot-password', function () {
-        return view('auth.forgot-password');
-    })->name('password.request');
-
-    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])
-        ->name('password.email');
-
 });
 
 // ─── Auth only (belum login → redirect ke login) ─────────────────────────────
