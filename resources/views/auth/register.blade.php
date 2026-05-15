@@ -289,12 +289,12 @@
                     <label for="role">Role</label>
                     <div class="input-icon-wrap">
                         <i class="fas fa-id-badge"></i>
-                        <select id="role" name="role"
+                        <select id="role" name="role_id"
                             class="form-control @error('role') is-invalid @enderror" required>
                             <option value="" disabled {{ old('role') ? '' : 'selected' }}>Select your role</option>
-                            <option value="user"        {{ old('role') == 'user'        ? 'selected' : '' }}>User</option>
-                            <option value="it_helpdesk" {{ old('role') == 'it_helpdesk' ? 'selected' : '' }}>IT Helpdesk</option>
-                            <option value="it_infra"    {{ old('role') == 'it_infra'    ? 'selected' : '' }}>IT Infra</option>
+                            <option value="1"        {{ old('role') == '1'        ? 'selected' : '' }}>User</option>
+                            <option value="2" {{ old('role') == '2' ? 'selected' : '' }}>IT Helpdesk</option>
+                            <option value="3"    {{ old('role') == '3'    ? 'selected' : '' }}>IT Infra</option>
                         </select>
                         <i class="fas fa-chevron-down icon-right"></i>
                     </div>

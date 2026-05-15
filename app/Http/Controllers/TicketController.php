@@ -11,7 +11,31 @@ class TicketController extends Controller
 {
     public function list()
     {
-        $tickets = Ticket::paginate(10); // Assuming you have a Ticket model
+        $tickets = Ticket::where('ticket_for', 2)
+            ->orderByRaw("
+                FIELD(
+                    classification,
+                    'P0',
+                    'P1',
+                    'P2',
+                    'P3',
+                    'P4',
+                    'P5'
+                )
+            ")
+            ->orderByRaw("
+                FIELD(
+                    status,
+                    'TODO',
+                    'PENDING',
+                    'PROGRESS',
+                    'NEED_REVIEW',
+                    'DONE'
+                )
+            ")
+            ->latest()
+            ->paginate(10);
+
         return view('pages.ticket', compact('tickets'));
     }
 
@@ -29,14 +53,33 @@ class TicketController extends Controller
             'status' => 'TODO', // Default status
             'description' => $request->description,
             'image' => $imageName,
+            'ticket_for' => $request->ticket_for,
+            'created_by' => Auth::id(), // Assuming you have authentication
         ]);
 
         return redirect()->route('tickets.list')->with('success', 'Ticket created successfully.');
     }
 
-    public function detail($id)
+    public function update(Request $request, $id)
     {
-        // Logic to show detail of a ticket
+        $ticket = Ticket::findOrFail($id);
+        $ticket->update([
+            'company' => $request->company,
+            'country' => $request->country,
+            'operator' => $request->operator,
+            'service' => $request->service,
+            'project_name' => $request->project_name,
+            'classification' => $request->classification,
+            'description' => $request->description,
+            'status' => 'PROGRESS', // Update status to PROGRESS when edited
+        ]);
+        if ($request->hasFile('image')) {
+            $imageName = time() . '.' . $request->image->extension();
+            $request->image->storeAs('images', $imageName, 'public');
+            $ticket->update(['image' => $imageName]);
+        }
+
+        return redirect()->route('tickets.list')->with('success', 'Ticket updated successfully.');
     }
 
     public function status($id, Request $request)

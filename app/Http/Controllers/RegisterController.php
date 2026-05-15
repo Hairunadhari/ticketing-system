@@ -17,15 +17,15 @@ class RegisterController extends Controller
         $validatedData = $request->validate([
             'full_name' => 'required|string|max:255',   // ← sesuaikan
             'email'     => 'required|string|email|max:255|unique:users',
-            'password'  => 'required|string|min:8|confirmed',
-            'role'      => 'required|in:it_infra,it_helpdesk,user',
+            'password'  => 'required|string|min:5|confirmed',
+            'role_id'      => 'required|in:1,2,3',
         ]);
 
         User::create([
             'name'     => $validatedData['full_name'],  // ← mapping ke kolom 'name' di DB
             'email'    => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
-            'role'     => $validatedData['role'],
+            'role_id'     => $validatedData['role_id'],
         ]);
 
         return redirect('/login')->with('success', 'Registration successful! Please log in.');
