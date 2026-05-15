@@ -11,7 +11,17 @@ class TicketController extends Controller
 {
     public function list()
     {
-        $tickets = Ticket::where('ticket_for', 2)
+        $tickets = Ticket::where('ticket_for', 2)->with('createdBy', 'handledBy')
+            ->orderByRaw("
+                FIELD(
+                    status,
+                    'TODO',
+                    'PENDING',
+                    'PROGRESS',
+                    'NEED_REVIEW',
+                    'DONE'
+                )
+            ")
             ->orderByRaw("
                 FIELD(
                     classification,
@@ -23,19 +33,8 @@ class TicketController extends Controller
                     'P5'
                 )
             ")
-            ->orderByRaw("
-                FIELD(
-                    status,
-                    'TODO',
-                    'PENDING',
-                    'PROGRESS',
-                    'NEED_REVIEW',
-                    'DONE'
-                )
-            ")
             ->latest()
-            ->paginate(10);
-
+            ->paginate(5);
         return view('pages.ticket', compact('tickets'));
     }
 
@@ -120,5 +119,32 @@ class TicketController extends Controller
         $ticket->save();
 
         return redirect()->route('tickets.list')->with('success', 'Work started on the ticket successfully.');
+    }
+
+    public function delete($id, Request $request)
+    {
+        $ticket = Ticket::findOrFail($id);
+        $ticket->delete();
+
+        return redirect()->route('tickets.list')->with('success', 'Ticket deleted successfully.');
+    }
+
+    public function finishWork($id, Request $request)
+    {
+        $ticket = Ticket::findOrFail($id);
+        $ticket->status = 'NEED_REVIEW';
+        $ticket->save();
+
+        return redirect()->route('tickets.list')->with('success', 'Work finished on the ticket successfully.');
+    }
+
+    public function close($id, Request $request)
+    {
+        $ticket = Ticket::findOrFail($id);
+        $ticket->status = 'DONE';
+        $ticket->finished_at = Carbon::now('Asia/Jakarta');
+        $ticket->save();
+
+        return redirect()->route('tickets.list')->with('success', 'Ticket closed successfully.');
     }
 }

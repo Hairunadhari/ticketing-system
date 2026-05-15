@@ -29,11 +29,11 @@ class LoginController extends Controller
             ->withErrors(['email' => 'Email atau password salah.']);
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
         Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
         return redirect('/login')->with('success', 'Berhasil logout.');
     }
 }

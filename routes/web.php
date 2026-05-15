@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TicketController;
@@ -12,8 +13,8 @@ Route::get('/', function () {
 // ─── Guest only (sudah login → redirect ke dashboard) ───────────────────────
 Route::middleware('guest')->group(function () {
 
-    Route::get('/forgot-password', function () {
-        return view('auth.forgot-password');
+    Route::get('/forgot_password', function () {
+        return view('auth.forgot_password');
     })->name('password.request');
 
     Route::controller(RegisterController::class)->prefix('register')->name('register.')->group(function () {
@@ -25,7 +26,6 @@ Route::middleware('guest')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/create', 'login')->name('create');
     });
-
 });
 
 // ─── Auth only (belum login → redirect ke login) ─────────────────────────────
@@ -35,7 +35,7 @@ Route::middleware('auth')->group(function () {
         return view('pages.dashboard');
     });
 
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::controller(TicketController::class)->prefix('tickets')->name('tickets.')->group(function () {
         Route::get('/', 'list')->name('list');
@@ -45,6 +45,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/export', 'export')->name('export');
         Route::post('/{id}/set-pending', 'setPending')->name('set-pending');
         Route::post('/{id}/start-work', 'startWork')->name('startWork');
+        Route::post('/{id}/delete', 'delete')->name('delete');
+        Route::post('/{id}/finish-work', 'finishWork')->name('finishWork');
+        Route::post('/{id}/close', 'close')->name('close');
     });
 
 });

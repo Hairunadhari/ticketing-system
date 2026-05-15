@@ -13,8 +13,7 @@
     <div class="section-body">
         <h2 class="section-title">List Ticket</h2>
         <p class="section-lead">
-            Pusat pengelolaan tiket untuk memantau, memproses, dan menyelesaikan setiap laporan dengan lebih cepat dan
-            efisien.
+            Centralized ticket management system to monitor, process, and resolve every report more quickly and efficiently.
         </p>
 
         <!-- Button Add dengan style modern -->
@@ -56,8 +55,8 @@
                             </span>
 
                             @else
-                            <span class="badge badge-light px-3 py-2 text-uppercase" style="border-radius: 20px;">
-                                Status: {{ $ticket->status }}
+                            <span class="badge badge-danger px-3 py-2 text-uppercase" style="border-radius: 20px;">
+                                Status: NEED REVIEW
                             </span>
                             @endif
 
@@ -73,14 +72,20 @@
                                     {{ $ticket->classification }}</span>
                             </div>
                             <div class="col-auto mr-3 border-left pl-3">
-                                <strong>Created :</strong> {{ $ticket->created_at->diffForHumans() }}
+                                <strong>Created :</strong> {{ \Carbon\Carbon::parse($ticket->created_at)->format('d M Y H:i:s') }}
                             </div>
+                            @if ($ticket->status == 'DONE')
+                                <div class="col-auto mr-3 border-left pl-3">
+                                <strong>Finished :</strong> {{ \Carbon\Carbon::parse($ticket->finished_at)->format('d M Y H:i:s') }}
+                            </div>
+                            @endif
                             <div class="col-auto border-left pl-3">
                                 <strong>Created By :</strong>
                                 <img alt="image" src="{{ asset('stisla/assets/img/avatar/avatar-1.png') }}"
                                     class="rounded-circle mr-1" width="20">
                                 <span class="font-weight-600 text-dark">{{ $ticket->createdBy->name }}</span>
                             </div>
+
                             @if ($ticket->handled_by != null)
 
                             <div class="col-auto border-left pl-3">
@@ -99,6 +104,8 @@
                             </p>
 
                             <!-- Tombol Aksi di samping deskripsi sesuai gambar -->
+                            @if ($ticket->status != 'DONE')
+                                
                             <div class="buttons">
                                 @if ($ticket->status == 'PENDING')
 
@@ -106,7 +113,7 @@
                                     data-target="#checkReasonModal{{ $ticket->id }}">
                                     <i class="fas fa-info-circle mr-1"></i> Check Reason Pending
                                 </btn>
-                                @elseif ($ticket->status == 'TODO')
+                                @elseif ($ticket->status == 'TODO' && Auth::user()->role_id != 1)
                                 <form action="{{ route('tickets.startWork', $ticket->id) }}" method="POST"
                                     class="d-inline form-start-work">
                                     @csrf
@@ -114,6 +121,12 @@
                                         Work</button>
                                 </form>
                                 @elseif ($ticket->handled_by == Auth::id() && $ticket->status == 'PROGRESS')
+                                <form action="{{ route('tickets.finishWork', $ticket->id) }}" method="POST"
+                                   class="d-inline form-finish-ticket">
+                                   @csrf
+                                   <button type="submit" class="btn btn-sm  btn-outline-success px-3">Review
+                                       Work</button>
+                               </form>
                                 <a href="#" class="btn btn-outline-info btn-sm px-3 shadow-none" data-toggle="modal"
                                     data-target="#setPendingModal{{ $ticket->id }}">
                                     <i class="fas fa-file-alt mr-1"></i> Set Pending
@@ -123,14 +136,30 @@
                                     data-target="#detailModal{{ $ticket->id }}">
                                     <i class="fas fa-eye mr-1"></i> Detail Ticket
                                 </a>
-                                @if ($ticket->created_by == Auth::id())
-
+                                @if ($ticket->created_by === Auth::id())
                                 <a href="#" class="btn btn-outline-info btn-sm px-3 shadow-none" data-toggle="modal"
                                     data-target="#editModal{{ $ticket->id }}">
                                     <i class="fas fa-edit mr-1"></i> Edit Ticket
                                 </a>
+                                 <form action="{{ route('tickets.delete', $ticket->id) }}" method="POST"
+                                    class="d-inline form-delete-ticket">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-danger btn-sm px-3">
+                                       <i class="fas fa-trash"></i> Delete Ticket</button>
+                                </form>
+                                @if ($ticket->status == 'NEED_REVIEW')
+                                    
+                                <form action="{{ route('tickets.close', $ticket->id) }}" method="POST"
+                                    class="d-inline form-close-ticket">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-success btn-sm px-3"><i class="fas fa-check"></i> Close
+                                        Ticket</button>
+                                    </form>
+                                    @endif
                                 @endif
                             </div>
+                            @endif
+
                         </div>
                     </div>
                 </div>
@@ -152,12 +181,66 @@
         let form = this;
 
         Swal.fire({
-            title: 'Yakin?',
-            text: "Ticket akan diproses!",
+            title: 'Are you sure?',
+            text: "Ticket will be processed!",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Ya, lanjut!',
-            cancelButtonText: 'Batal'
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+    $(document).on('submit', '.form-delete-ticket', function (e) {
+        e.preventDefault();
+
+        let form = this;
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Ticket will be deleted!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+    $(document).on('submit', '.form-finish-ticket', function (e) {
+        e.preventDefault();
+
+        let form = this;
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Ticket will be sent for review!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, send for review!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+    $(document).on('submit', '.form-close-ticket', function (e) {
+        e.preventDefault();
+
+        let form = this;
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Ticket will be closed!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, close ticket!',
+            cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
                 form.submit();
