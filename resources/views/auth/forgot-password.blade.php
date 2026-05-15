@@ -49,6 +49,21 @@
         padding: 1.75rem;
     }
 
+    /* Status / success message */
+    .alert-success {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 13px;
+        color: #15803d;
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .alert-success i { font-size: 15px; margin-top: 1px; flex-shrink: 0; }
+
     /* Field */
     .field-group { margin-bottom: 1rem; }
     .field-group label {
@@ -58,15 +73,6 @@
         margin-bottom: 6px;
         font-weight: 500;
     }
-    .field-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 6px;
-    }
-    .field-row label { margin-bottom: 0; }
-    .forgot-link { font-size: 12px; color: #2d6fd6; text-decoration: none; }
-    .forgot-link:hover { text-decoration: underline; }
 
     /* Input */
     .input-icon-wrap { position: relative; }
@@ -89,6 +95,7 @@
         background: #fff;
         transition: border-color 0.15s, box-shadow 0.15s;
         outline: none;
+        box-sizing: border-box;
     }
     .form-control::placeholder { color: #c0c7d4; }
     .form-control:focus {
@@ -99,13 +106,13 @@
     /* Error */
     .field-error { font-size: 12px; color: #dc2626; margin-top: 5px; }
 
-    /* Remember */
-    .remember-row {
-        display: flex; align-items: center;
-        gap: 8px; margin-bottom: 1.4rem;
+    /* Helper text */
+    .field-hint {
+        font-size: 12px;
+        color: #9ca3af;
+        margin-top: 5px;
+        line-height: 1.5;
     }
-    .remember-row label { font-size: 13px; color: #6b7280; cursor: pointer; margin: 0; }
-    .remember-row input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; accent-color: #2d6fd6; }
 
     /* Primary button */
     .btn-login {
@@ -120,48 +127,26 @@
         cursor: pointer;
         transition: background 0.15s, transform 0.1s;
         letter-spacing: 0.2px;
+        margin-top: 0.25rem;
     }
     .btn-login:hover  { background: #245fba; }
     .btn-login:active { transform: scale(0.98); }
 
-    /* Divider */
-    .or-divider {
-        display: flex; align-items: center;
-        gap: 10px; margin: 1.25rem 0;
-    }
-    .or-line { flex: 1; height: 1px; background: #e5e7eb; }
-    .or-text  { font-size: 12px; color: #9ca3af; }
-
-    /* Google button */
-    .btn-google {
-        width: 100%;
-        padding: 9px;
-        font-size: 13px;
-        font-weight: 500;
-        color: #374151;
-        background: #fff;
-        border: 1px solid #d1d5db;
-        border-radius: 10px;
-        cursor: pointer;
-        display: flex; align-items: center; justify-content: center;
-        gap: 8px;
-        transition: background 0.15s;
-    }
-    .btn-google:hover { background: #f9fafb; }
-
-    /* Register link */
-    .register-prompt {
+    /* Back to login link */
+    .back-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
         text-align: center;
         font-size: 13px;
         color: #6b7280;
         margin-top: 1.25rem;
-    }
-    .register-prompt a {
-        color: #2d6fd6;
-        font-weight: 600;
         text-decoration: none;
+        transition: color 0.15s;
     }
-    .register-prompt a:hover { text-decoration: underline; }
+    .back-link i { font-size: 12px; }
+    .back-link:hover { color: #2d6fd6; }
 
     /* Footer */
     .login-footer {
@@ -177,17 +162,25 @@
 
         <div class="login-heading">
             <div class="login-icon-wrap">
-                <i class="fas fa-ticket-alt"></i>
+                <i class="fas fa-key"></i>
             </div>
-            <h1>Welcome back</h1>
-            <p>Sign in to your ticketing workspace</p>
+            <h1>Forgot password?</h1>
+            <p>We'll send a reset link to your email</p>
         </div>
 
         <div class="login-card">
 
-            <form method="POST" action="/login/create" enctype="multipart/form-data">
+            {{-- Success status --}}
+            @if (session('status'))
+                <div class="alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    {{ session('status') }}
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('password.email') }}">
                 @csrf
-                @method('post')
+
                 <div class="field-group">
                     <label for="email">Email address</label>
                     <div class="input-icon-wrap">
@@ -206,43 +199,17 @@
                     @error('email')
                         <p class="field-error">{{ $message }}</p>
                     @enderror
+                    <p class="field-hint">Enter the email associated with your account and we'll send you a password reset link.</p>
                 </div>
 
-                <div class="field-group">
-                    <div class="field-row">
-                        <label for="password">Password</label>
-                        <a href="{{ route('password.request') }}" class="forgot-link">Forgot password?</a>
-                    </div>
-                    <div class="input-icon-wrap">
-                        <i class="fas fa-lock"></i>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            class="form-control @error('password') is-invalid @enderror"
-                            placeholder="••••••••"
-                            autocomplete="current-password"
-                            required
-                        >
-                    </div>
-                    @error('password')
-                        <p class="field-error">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="remember-row">
-                    <input type="checkbox" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
-                    <label for="remember">Remember me for 30 days</label>
-                </div>
-
-                <button type="submit" class="btn-login">Sign in</button>
+                <button type="submit" class="btn-login">Send reset link</button>
             </form>
+
         </div>
 
-        {{-- Register prompt --}}
-        <p class="register-prompt">
-            Don't have an account? <a href="{{ route('register.index') }}">Register Now</a>
-        </p>
+        <a href="/login" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to sign in
+        </a>
 
         <p class="login-footer">© {{ date('Y') }} Ticketing System · All rights reserved</p>
 

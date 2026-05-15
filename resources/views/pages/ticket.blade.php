@@ -13,8 +13,7 @@
     <div class="section-body">
         <h2 class="section-title">List Ticket</h2>
         <p class="section-lead">
-            Pusat pengelolaan tiket untuk memantau, memproses, dan menyelesaikan setiap laporan dengan lebih cepat dan
-            efisien.
+            Centralized ticket management system to monitor, process, and resolve every report more quickly and efficiently.
         </p>
 
         <!-- Button Add dengan style modern -->
@@ -60,7 +59,7 @@
                                 Status: {{ $ticket->status }}
                             </span>
                             @endif
-                           
+
                         </div>
                     </div>
 
@@ -98,7 +97,7 @@
                                 </a>
                                 @endif
                                  @if ($ticket->status == 'PENDING')
-                                
+
                                     <btn class="btn bt-sm btn-light text-uppercase"  data-toggle="modal"
                                     data-target="#checkReasonModal{{ $ticket->id }}" style="border-radius: 20px;">
                                     Check Reason Pending

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TicketController;
@@ -12,8 +13,8 @@ Route::get('/', function () {
 // ─── Guest only (sudah login → redirect ke dashboard) ───────────────────────
 Route::middleware('guest')->group(function () {
 
-    Route::get('/forgot-password', function () {
-        return view('auth.forgot-password');
+    Route::get('/forgot_password', function () {
+        return view('auth.forgot_password');
     })->name('password.request');
 
     Route::controller(RegisterController::class)->prefix('register')->name('register.')->group(function () {
@@ -25,6 +26,12 @@ Route::middleware('guest')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/create', 'login')->name('create');
     });
+    Route::get('/forgot-password', function () {
+        return view('auth.forgot-password');
+    })->name('password.request');
+
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])
+        ->name('password.email');
 
 });
 
