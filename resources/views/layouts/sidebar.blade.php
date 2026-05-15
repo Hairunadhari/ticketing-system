@@ -11,7 +11,7 @@
             <li><a class="nav-link" href="/dashboard"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
             <li class="menu-header">Starter</li>
             <li><a class="nav-link" href="/tickets"><i class="fas fa-headset"></i> <span>Ticket IT Helpdesk</span></a></li>
-            <li><a class="nav-link" href="/tickets"><i class="fas fa-server"></i> <span>Ticket IT Infrastructure</span></a></li>
+            <li><a class="nav-link" href="/tickets/infra"><i class="fas fa-server"></i> <span>Ticket IT Infrastructure</span></a></li>
             <li><a class="nav-link text-danger" href="/logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
         </ul>
     </aside>

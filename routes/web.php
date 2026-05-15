@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
 
     Route::controller(TicketController::class)->prefix('tickets')->name('tickets.')->group(function () {
         Route::get('/', 'list')->name('list');
+        Route::get('/infra', 'listInfra')->name('list-infra');
         Route::post('/create', 'create')->name('create');
         Route::put('/{id}/update', 'update')->name('update');
         Route::patch('/{id}/status', 'status')->name('status');

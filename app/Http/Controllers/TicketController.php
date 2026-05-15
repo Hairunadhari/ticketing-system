@@ -38,6 +38,35 @@ class TicketController extends Controller
         return view('pages.ticket', compact('tickets'));
     }
 
+    public function listInfra()
+    {
+        $tickets = Ticket::where('ticket_for', 3)->with('createdBy', 'handledBy')
+            ->orderByRaw("
+                FIELD(
+                    status,
+                    'TODO',
+                    'PENDING',
+                    'PROGRESS',
+                    'NEED_REVIEW',
+                    'DONE'
+                )
+            ")
+            ->orderByRaw("
+                FIELD(
+                    classification,
+                    'P0',
+                    'P1',
+                    'P2',
+                    'P3',
+                    'P4',
+                    'P5'
+                )
+            ")
+            ->latest()
+            ->paginate(5);
+        return view('pages.ticket_infra', compact('tickets'));
+    }
+
     public function create(Request $request)
     {
         $imageName = time() . '.' . $request->image->extension();
