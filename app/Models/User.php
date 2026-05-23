@@ -54,4 +54,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Ticket::class, 'handled_by');
     }
+
+    public function role()
+{
+    return $this->belongsTo(Role::class);
+}
 }
