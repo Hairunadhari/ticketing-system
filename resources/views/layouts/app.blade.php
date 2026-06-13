@@ -60,7 +60,6 @@
 
         <!-- JS Libraries -->
         <script src="{{ asset('stisla/assets/modules/simple-weather/jquery.simpleWeather.min.js') }}"></script>
-        <script src="{{ asset('stisla/assets/modules/chart.min.js') }}"></script>
         <script src="{{ asset('stisla/assets/modules/jqvmap/dist/jquery.vmap.min.js') }}"></script>
         <script src="{{ asset('stisla/assets/modules/jqvmap/dist/maps/jquery.vmap.world.js') }}"></script>
         <script src="{{ asset('stisla/assets/modules/summernote/summernote-bs4.js') }}"></script>
@@ -84,6 +83,8 @@
         });
     </script>
     @endif
-    </body>
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  {{-- pastikan ini ada --}}
 
-    </html>
+        @stack('scripts')  {{-- ← tambah ini --}}
+    </body>
+</html>

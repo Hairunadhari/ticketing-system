@@ -17,7 +17,7 @@
         <!-- Action Header Row -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="section-title my-0 text-dark font-weight-600" style="font-size: 1.25rem;"> active tickets</h2>
-            <button class="btn btn-primary btn-icon icon-left btn-lg shadow-sm font-weight-600 px-4" style="border-radius: 8px;" data-toggle="modal" data-target="#exampleModal">
+            <button class="btn btn-primary btn-icon icon-left btn-lg shadow-sm font-weight-600 px-4" style="border-radius: 8px;" data-toggle="modal" data-target="#exampleModalhelpdesk">
                 <i class="fas fa-plus mr-2"></i> Add New Ticket
             </button>
         </div>
@@ -39,7 +39,7 @@
                             </div>
                             
                             <!-- Badges Status Modern -->
-                            <div class="d-flex align-items-center bg-light p-1 rounded-pill px-2">
+                            <div class="d-flex align-items-center ">
                                 @if($ticket->status == 'TODO')
                                     <span class="badge badge-secondary px-3 py-2 rounded-pill font-weight-bold text-uppercase" style="font-size: 0.75rem;">TODO</span>
                                 @elseif($ticket->status == 'PROGRESS')

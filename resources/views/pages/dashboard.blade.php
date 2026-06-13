@@ -17,22 +17,22 @@
                             <h4>Total Ticket</h4>
                         </div>
                         <div class="card-body">
-                            10
+                            {{$total}}
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="card card-statistic-1">
-                    <div class="card-icon bg-danger">
-                        <i class="fas fa-clock"></i>
+                    <div class="card-icon bg-secondary">
+                        <i class="fas fa-list-ul"></i>
                     </div>
                     <div class="card-wrap">
                         <div class="card-header">
                             <h4>Ticket Todo</h4>
                         </div>
                         <div class="card-body">
-                            42
+                            {{$todo}}
                         </div>
                     </div>
                 </div>
@@ -40,14 +40,14 @@
             <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="card card-statistic-1">
                     <div class="card-icon bg-danger">
-                        <i class="fas fa-clock"></i>
+                        <i class="fas fa-hourglass-half"></i>
                     </div>
                     <div class="card-wrap">
                         <div class="card-header">
                             <h4>Ticket Pending</h4>
                         </div>
                         <div class="card-body">
-                            42
+                            {{$pending}}
                         </div>
                     </div>
                 </div>
@@ -62,22 +62,22 @@
                             <h4>Ticket Progress</h4>
                         </div>
                         <div class="card-body">
-                            42
+                            {{$progress}}
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="card card-statistic-1">
-                    <div class="card-icon bg-success">
-                        <i class="fas fa-check-circle"></i>
+                    <div class="card-icon bg-info">
+                        <i class="fas fa-search"></i>
                     </div>
                     <div class="card-wrap">
                         <div class="card-header">
                             <h4>Ticket Need Review</h4>
                         </div>
                         <div class="card-body">
-                            1,201
+                            {{$needReview}}
                         </div>
                     </div>
                 </div>
@@ -92,7 +92,7 @@
                             <h4>Ticket Done</h4>
                         </div>
                         <div class="card-body">
-                            1,201
+                            {{$done}}
                         </div>
                     </div>
                 </div>
@@ -144,11 +144,115 @@
                             </table>
                         </div>
                         <div class="d-flex justify-content-center mt-3">
-        {{ $activities->links('pagination::bootstrap-4') }}
-    </div>
+                            {{ $activities->links('pagination::bootstrap-4') }}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="row">
+    <div class="col-lg-6 col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>SLA Status Overview</h4>
+                    <small class="text-muted">
+        {{ $weekStart->format('d M Y') }} — {{ $weekEnd->format('d M Y') }}
+    </small>
+
+            </div>
+            <div class="card-body">
+                <canvas id="slaPieChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+
+    {{-- Hitung total SLA dulu --}}
+@php
+    $slaTotal = $slaOnTrack + $slaAtRisk + $slaBreached;
+@endphp
+
+<div class="col-lg-6 col-md-12">
+    <div class="card">
+        <div class="card-header">
+            <h4>SLA Summary</h4>
+            <small class="text-muted">
+                {{ $weekStart->format('d M Y') }} — {{ $weekEnd->format('d M Y') }}
+            </small>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Jumlah</th>
+                        <th>Persentase</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge" style="background:#28a745">On Track</span></td>
+                        <td>{{ $slaOnTrack }}</td>
+                        <td>{{ $slaTotal > 0 ? round(($slaOnTrack / $slaTotal) * 100, 1) : 0 }}%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge" style="background:#ffc107">At Risk</span></td>
+                        <td>{{ $slaAtRisk }}</td>
+                        <td>{{ $slaTotal > 0 ? round(($slaAtRisk / $slaTotal) * 100, 1) : 0 }}%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge" style="background:#dc3545">Breached</span></td>
+                        <td>{{ $slaBreached }}</td>
+                        <td>{{ $slaTotal > 0 ? round(($slaBreached / $slaTotal) * 100, 1) : 0 }}%</td>
+                    </tr>
+                    <tr class="font-weight-bold">
+                        <td>Total</td>
+                        <td>{{ $slaTotal }}</td>
+                        <td>100%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
     </section>
+    @push('scripts')
+<script>
+    const ctx = document.getElementById('slaPieChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['On Track', 'At Risk', 'Breached'],
+            datasets: [{
+                data: [
+                    {{ $slaOnTrack }},
+                    {{ $slaAtRisk }},
+                    {{ $slaBreached }}
+                ],
+                backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                borderColor: ['#fff', '#fff', '#fff'],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const pct = total > 0 ? ((context.raw / total) * 100).toFixed(1) : 0;
+                            return ` ${context.label}: ${context.raw} (${pct}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+@endpush
 @endsection

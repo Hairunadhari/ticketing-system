@@ -20,6 +20,19 @@ class Ticket extends Model
             $random = strtoupper(Str::random(3));
 
             $ticket->code = 'TKT-' . now()->format('YmdHis') . '-' . $random;
+            // SLA berdasarkan classification
+            $hours = match (strtolower($ticket->classification)) {
+                'p0' => 2,
+                'p1' => 4,
+                'p2' => 6,
+                'p3' => 8,
+                'p4' => 24,
+                default => null,
+            };
+
+            if ($hours) {
+                $ticket->date_range = now()->addHours($hours);
+            }
         });
     }
 

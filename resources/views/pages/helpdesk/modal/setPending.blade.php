@@ -1,6 +1,6 @@
 <div class="modal fade" id="setPendingModalhelpdesk{{ $ticket->id }}" tabindex="-1" role="dialog">
     <div class="modal-dialog  modal-lg" role="document">
-        <form method="POST" action="{{ route('tickets.heldepsk.set-pending', ['id' => $ticket->id]) }}"
+        <form method="POST" action="{{ route('tickets.helpdesk.set-pending', ['id' => $ticket->id]) }}"
             enctype="multipart/form-data">
             @csrf
             @method('POST')
