@@ -294,7 +294,7 @@
                             <option value="" disabled {{ old('role') ? '' : 'selected' }}>Select your role</option>
                             <option value="1"        {{ old('role') == '1'        ? 'selected' : '' }}>User</option>
                             <option value="2" {{ old('role') == '2' ? 'selected' : '' }}>IT Helpdesk</option>
-                            <option value="3"    {{ old('role') == '3'    ? 'selected' : '' }}>IT Infra</option>
+                            <option value="3"    {{ old('role') == '3'    ? 'selected' : '' }}>IT Infrastructure</option>
                         </select>
                         <i class="fas fa-chevron-down icon-right"></i>
                     </div>

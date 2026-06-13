@@ -8,11 +8,11 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class TicketController extends Controller
+class TicketInfraController extends Controller
 {
     public function list()
     {
-        $tickets = Ticket::where('ticket_for', 2)->with('createdBy', 'handledBy')
+        $tickets = Ticket::where('ticket_for', 3)->with('createdBy', 'handledBy')
             ->orderByRaw("
                 FIELD(
                     status,
@@ -36,7 +36,7 @@ class TicketController extends Controller
             ")
             ->latest()
             ->paginate(5);
-        return view('pages.helpdesk.ticket', compact('tickets'));
+        return view('pages.infra.ticket', compact('tickets'));
     }
 
     public function create(Request $request)
@@ -64,7 +64,7 @@ class TicketController extends Controller
             'description' => 'Created a new ticket',
         ]);
 
-        return redirect()->route('tickets.list')->with('success', 'Ticket created successfully.');
+        return redirect()->route('tickets.infra.list')->with('success', 'Ticket created successfully.');
     }
 
     public function update(Request $request, $id)
@@ -86,7 +86,7 @@ class TicketController extends Controller
             $ticket->update(['image' => $imageName]);
         }
 
-        return redirect()->route('tickets.list')->with('success', 'Ticket updated successfully.');
+        return redirect()->route('tickets.infra.list')->with('success', 'Ticket updated successfully.');
     }
 
     public function status($id, Request $request)
@@ -115,7 +115,7 @@ class TicketController extends Controller
         $ticket->save();
 
 
-        return redirect()->route('tickets.list')->with('success', 'Ticket set to pending successfully.');
+        return redirect()->route('tickets.infra.list')->with('success', 'Ticket set to pending successfully.');
     }
 
     public function startWork($id, Request $request)
@@ -153,7 +153,7 @@ class TicketController extends Controller
             'description' => 'Deleted the ticket',
         ]);
 
-        return redirect()->route('tickets.list')->with('success', 'Ticket deleted successfully.');
+        return redirect()->route('tickets.infra.list')->with('success', 'Ticket deleted successfully.');
     }
 
     public function finishWork($id, Request $request)
@@ -168,7 +168,7 @@ class TicketController extends Controller
             'code_ticket' => $ticket->code, // Assuming you have the ticket code available
             'description' => 'Finished working on the ticket',
         ]);
-        return redirect()->route('tickets.list')->with('success', 'Work finished on the ticket successfully.');
+        return redirect()->route('tickets.infra.list')->with('success', 'Work finished on the ticket successfully.');
     }
 
     public function close($id, Request $request)
@@ -185,6 +185,6 @@ class TicketController extends Controller
             'description' => 'Closed the ticket',
         ]);
 
-        return redirect()->route('tickets.list')->with('success', 'Ticket closed successfully.');
+        return redirect()->route('tickets.infra.list')->with('success', 'Ticket closed successfully.');
     }
 }

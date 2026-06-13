@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\TicketInfraController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -33,15 +34,24 @@ Route::middleware('guest')->group(function () {
 // ─── Auth only (belum login → redirect ke login) ─────────────────────────────
 Route::middleware('auth')->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('pages.dashboard');
-    });
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
-    Route::controller(TicketController::class)->prefix('tickets')->name('tickets.')->group(function () {
+    Route::controller(TicketController::class)->prefix('tickets/helpdesk')->name('tickets.helpdesk.')->group(function () {
         Route::get('/', 'list')->name('list');
-        Route::get('/infra', 'listInfra')->name('list-infra');
+        Route::post('/create', 'create')->name('create');
+        Route::put('/{id}/update', 'update')->name('update');
+        Route::patch('/{id}/status', 'status')->name('status');
+        Route::post('/export', 'export')->name('export');
+        Route::post('/{id}/set-pending', 'setPending')->name('set-pending');
+        Route::post('/{id}/start-work', 'startWork')->name('startWork');
+        Route::post('/{id}/delete', 'delete')->name('delete');
+        Route::post('/{id}/finish-work', 'finishWork')->name('finishWork');
+        Route::post('/{id}/close', 'close')->name('close');
+    });
+    Route::controller(TicketInfraController::class)->prefix('tickets/infra')->name('tickets.infra.')->group(function () {
+        Route::get('/', 'list')->name('list');
         Route::post('/create', 'create')->name('create');
         Route::put('/{id}/update', 'update')->name('update');
         Route::patch('/{id}/status', 'status')->name('status');
